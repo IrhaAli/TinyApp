@@ -1,8 +1,3 @@
-// Generate random string of length 6 for testing purposes
-const generateRandomString = function() {
-  return Math.random().toString(36).slice(2).substring(0, 6);
-};
-
 // Set up the express web server
 const express = require("express");
 const app = express();
@@ -61,9 +56,6 @@ app.get("/urls/:id", (req, res) => {
 // Redirect to /urls after an existing url has been edited
 app.post("/urls", (req, res) => {
   let shortURL = req.body['longURLName'];
-  if (shortURL === undefined) {
-    shortURL = generateRandomString();
-  }
   urlDatabase[shortURL] = req.body['longURL'];
   const templateVars = { id: shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
