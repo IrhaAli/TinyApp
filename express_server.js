@@ -6,7 +6,7 @@ const generateRandomString = function() {
 // Set up the express web server
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 4343; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -47,6 +47,9 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
+  if (urlDatabase[id] === undefined) {
+    res.render("error404");
+  }
   const templateVars = { id, longURL: urlDatabase[id] };
   res.render("urls_show", templateVars);
 });
@@ -70,6 +73,12 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id/edit", (req, res) => {
+  urlDatabase[req.params.id] = req.body['longURL'];
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
+app.post("/urls/:id/", (req, res) => {
   urlDatabase[req.params.id] = req.body['longURL'];
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
