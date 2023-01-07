@@ -1,3 +1,8 @@
+// Generate random string of length 6 for testing purposes
+const generateRandomString = function() {
+  return Math.random().toString(36).slice(2).substring(0, 6);
+};
+
 // Set up the express web server
 const express = require("express");
 const app = express();
@@ -16,7 +21,7 @@ app.get("/", (req, res) => {
   res.send("Welcom to Tiny URL App where anything is possible if you believe");
 });
 
-// My URLs/TinyApp page
+// Page for user's URLs
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -38,12 +43,12 @@ app.get("/hellothere", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
-// Adding a new url page
+// Page for adding a new url
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-// URL page for a specified url
+// Page for a specified url
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   if (urlDatabase[id] === undefined) {
@@ -53,36 +58,33 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// Redirect to /urls after an existing url has been edited
-app.post("/urls", (req, res) => {
-  let shortURL = req.body['longURLName'];
-  urlDatabase[shortURL] = req.body['longURL'];
-  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL] };
-  res.render("urls_show", templateVars);
-});
-
 // Redirect to the longURL that the shortURL is hyperlinked to
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 
-// Redirect to urls after a url is destroyed
+// Redirect to /urls after a url is destroyed
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
-// Redirect to urls after an existing url is edited
+// Redirect to /urls after an existing url is edited
 app.post("/urls/:id/edit", (req, res) => {
+  urlDatabase[req.params.id] = req.body['longURL'];
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
-// Redirect to urls after a url is added
-app.post("/urls/:id/", (req, res) => {
-  urlDatabase[req.params.id] = req.body['longURL'];
+// Redirect to /urls after a url is added
+app.post("/urls/add", (req, res) => {
+  let shortURL = req.body['longURLName'];
+  if (shortURL === "" || shortURL === null || shortURL === undefined) {
+    shortURL = generateRandomString();
+  }
+  urlDatabase[shortURL] = req.body['longURL'];
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });

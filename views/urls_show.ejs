@@ -31,7 +31,7 @@
     <div class="card-body">
       <h5 class="card-title">Edit</h5>
       <p class="card-text">
-        <form name="editURL" class="form-inline" action="/urls/<%= id %>/" onsubmit="return validateForm()" method="POST" required>
+        <form name="editURL" class="form-inline" action="/urls/<%= id %>/edit" onsubmit="return validateForm()" method="POST" required>
           <div class="form-group mb-2">
             <label for="longURL">New URL:</label>
             <input
