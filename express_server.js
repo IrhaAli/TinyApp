@@ -15,6 +15,11 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 // Get json of the url database
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -23,6 +28,11 @@ app.get("/urls.json", (req, res) => {
 // Try out some html in the server
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+app.get("/hellothere", (req, res) => {
+  const templateVars = { greeting: "Hello World!" };
+  res.render("hello_world", templateVars);
 });
 
 app.listen(PORT, () => {
