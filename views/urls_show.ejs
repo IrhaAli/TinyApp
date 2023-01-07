@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <script>
+    function validateForm() {
+      const longURL = document.forms["editURL"]["longURL"].value;
+      if (longURL == "" || longURL == null) {
+        alert("You must provide a URL");
+        return false;
+      }
+    }
+    </script>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
   <title>TinyApp - URL</title>
 </head>
-
 <body>
   <div class="card text-center">
     <div class="card-header"></div>
@@ -24,7 +31,7 @@
     <div class="card-body">
       <h5 class="card-title">Edit</h5>
       <p class="card-text">
-        <form class="form-inline" action="/urls/<%= id %>/" method="POST">
+        <form name="editURL" class="form-inline" action="/urls/<%= id %>/" onsubmit="return validateForm()" method="POST" required>
           <div class="form-group mb-2">
             <label for="longURL">New URL:</label>
             <input

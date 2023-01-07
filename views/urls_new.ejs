@@ -6,6 +6,15 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <script>
+      function validateForm() {
+        const longURL = document.forms["newURL"]["longURL"].value;
+        if ((longURL == "" || longURL == null)) {
+          alert("You must provide a URL");
+          return false;
+        }
+      }
+      </script>
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -20,7 +29,7 @@
 
     <main style="margin: 1em;">
       <h3>Create TinyURL</h3>
-      <form class="form-inline" action="/urls" method="POST">
+      <form name="newURL" class="form-inline" onsubmit="return validateForm()" action="/urls" method="POST" required>
         <div class="form-group mb-2">
           <label for="longURL">Enter a URL:</label>
           <input

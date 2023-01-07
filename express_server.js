@@ -6,7 +6,7 @@ const generateRandomString = function() {
 // Set up the express web server
 const express = require("express");
 const app = express();
-const PORT = 4343; // default port 8080
+const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
@@ -84,9 +84,6 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // Redirect to urls after an existing url is edited
 app.post("/urls/:id/edit", (req, res) => {
-  if (req.body['longURL'] !== undefined) {
-    urlDatabase[req.params.id] = req.body['longURL'];
-  }
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
