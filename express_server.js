@@ -45,7 +45,8 @@ app.get("/hellothere", (req, res) => {
 
 // Page for adding a new url
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_new", templateVars);
 });
 
 // Page for a specified url
