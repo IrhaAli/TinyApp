@@ -6,7 +6,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -14,7 +13,7 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>TinyApp</title>
+    <title>TinyApp - My URLs</title>
   </head>
   <body>
     <main style="margin: 1em;">
@@ -29,8 +28,8 @@
         <tbody>
           <% for (let id in urls) { %>
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
+              <td><a href="<%= urls[id] %>"  target="_blank"><%= id %></a></td>
+              <td><a href="<%= urls[id] %>"  target="_blank"><%= urls[id] %></a></td>
               <td><form class="form-inline" action="/urls/<%= id %>" method="GET">
                 <div class="form-group mb-2">
                   <button type="submit" class="btn btn-primary">Edit</button>

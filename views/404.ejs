@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
-
+<!--Taken from the Demo Store of cs-cart. The comments below are guesses of what's happening in the file-->
 <head>
   <meta name="robots" content="noindex, nofollow" />
   <title>Page Not Found</title>
-
   <style>
     .bigEntrance {
       animation-name: bigEntrance;
@@ -15,7 +14,7 @@
       -webkit-animation-timing-function: ease-out;
       visibility: visible !important;
     }
-
+    /* Initial animation of the banner */
     @keyframes bigEntrance {
       0% {
         transform: scale(0.3) rotate(6deg) translateX(-30%) translateY(30%);
@@ -52,7 +51,6 @@
         opacity: 1;
       }
     }
-
     @-webkit-keyframes bigEntrance {
       0% {
         -webkit-transform: scale(0.3) rotate(6deg) translateX(-30%) translateY(30%);
@@ -90,11 +88,11 @@
       }
     }
 
+    /* Styling/Looks of the banner and error code */
     body {
       margin-top: 100px;
       font-family: Tahoma;
     }
-
     .banner {
       background-color: #fe5652;
       border-radius: 24px;
@@ -112,7 +110,6 @@
       /* ie hack */
 
     }
-
     .banner-inner {
       border-radius: 20px;
       border: 4px solid #ffffff;
@@ -120,11 +117,9 @@
       text-transform: uppercase;
       letter-spacing: 2px;
     }
-
     .container {
       text-align: center;
     }
-
     .message {
       margin-top: 20px;
       font-size: 20px;
@@ -132,9 +127,8 @@
     }
   </style>
 </head>
-
 <body>
-
+  <!-- Contents of the banner and error code -->
   <div class="container">
     <div class="bigEntrance banner">
       <div class="banner-inner">
@@ -142,10 +136,8 @@
       </div>
     </div>
   </div>
-
   <div class="message">
     <a href="https://http.cat/404" target="_blank">Error 404</a>
   </div>
 </body>
-
 </html>
