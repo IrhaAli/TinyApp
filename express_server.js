@@ -1,3 +1,8 @@
+// Generate random string of length 6 for testing purposes
+const generateRandomString = function() {
+  return Math.random().toString(36).slice(2).substring(0, 6);
+}
+
 // Set up the express web server
 const express = require("express");
 const app = express();
@@ -45,6 +50,12 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = { id, longURL: urlDatabase[id] };
   res.render("urls_show", templateVars);
 });
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
