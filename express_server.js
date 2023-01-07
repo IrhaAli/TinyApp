@@ -35,6 +35,12 @@ app.get("/hellothere", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
+app.get("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  const templateVars = { id, longURL: urlDatabase[id] };
+  res.render("urls_show", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
