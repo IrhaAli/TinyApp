@@ -88,13 +88,17 @@ app.post("/urls/:id/edit", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Rdirect to urls after a url is added
+// Redirect to urls after a url is added
 app.post("/urls/:id/", (req, res) => {
   urlDatabase[req.params.id] = req.body['longURL'];
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+// Custom 404 for all non-existing pages
+app.get('*', function(req, res) {
+  res.render("404");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
