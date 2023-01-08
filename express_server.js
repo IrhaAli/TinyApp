@@ -3,14 +3,20 @@ const { generateRandomString } = require('./backend/genRandString');
 
 // Set up the express web server
 const express = require("express");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 // Cookies
-app.use(cookieParser());
+// app.use(cookieParser());
+
+// temporary database for users
+const USERS = {
+  'user1': 'password1',
+  'user2': 'password2'
+};
 
 // Starting database
 const urlDatabase = {
@@ -70,6 +76,29 @@ app.get("/u/:id", (req, res) => {
 // Redirect to login/signup page
 app.get("/login", (req, res) => {
   res.render("pages/login");
+});
+
+// After login form is filled
+app.post('/login', (req, res) => {
+  const email = req.body['email'];
+  const password = USERS[email];
+  if (password === req.body['password']) {
+    const templateVars = { urls: urlDatabase };
+    res.render("pages/urls_index", templateVars);
+  } else {
+    res.render("pages/login");
+  }
+});
+
+// After signup form is filled
+app.post('/signup', (req, res) => {
+  const email = req.body['email'];
+  if (USERS[email] === undefined) {
+    USERS[email] = req.body['password'];
+    res.render("pages/urls_new");
+  } else {
+    res.render("pages/login");
+  }
 });
 
 // Redirect to /urls after a url is destroyed
