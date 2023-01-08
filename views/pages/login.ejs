@@ -1,0 +1,133 @@
+<head>
+  <meta charset="utf-8" />
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
+  <title>Log In/Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    #myInput {
+      background-image: url('/css/searchicon.png');
+      background-position: 10px 12px;
+      background-repeat: no-repeat;
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
+
+    #myUL {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #myUL li a {
+      border: 1px solid #ddd;
+      margin-top: -1px;
+      /* Prevent double borders */
+      background-color: #f6f6f6;
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      color: black;
+      display: block
+    }
+
+    #myUL li a:hover:not(.header) {
+      background-color: #eee;
+    }
+  </style>
+  <script>
+    function validateForm(type) {
+      const email = document.forms[type]["email"].value;
+      const password = document.forms[type]["password"].value;
+      const name = document.forms[type]["name"].value;
+      if ((email === "" || email === null) || (password === "" || password === null) || ((name === "" || name === null) && (name !== undefined))) {
+        alert("One of the fields below is missing");
+        return false;
+      }
+    }
+  </script>
+</head>
+
+<%- include('../partials/head', {title :'kdkdk'}) %>
+<%- include('../partials/header') %>
+
+<body class="screen--smlarge">
+  <table>
+    <tr>
+      <td>
+        <main style="margin: 5em; margin-left: 5em;">
+          <div class="tygh-content clearfix">
+            <div class="container-fluid  content-grid">
+              <div class="row-fluid">
+                <div class="span8  main-content-grid">
+                  <div class="ty-mainbox-container clearfix">
+                    <div class="ty-mainbox-body">
+                      <div class="ty-profile-field ty-account form-wrap" id="content_general">
+                        <h2>Log In</h2>
+                        <form name="login" onsubmit="return validateForm('login')" enctype="multipart/form-data"
+                          action="/urls" method="GET" class="cm-processed-form" required>
+                          <div class="form-group mb-2">
+                            <label for="login">Email</label>
+                            <input class="form-control" type="text" name="email"
+                              style="width: 300px; margin: 1em" />
+                            <label for="login">Password</label>
+                            <input class="form-control" type="password" name="password"
+                              style="width: 300px; margin: 1em" />
+                            <button type="submit" class="btn btn-primary">Log In</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </td>
+      <td>
+        <main style="margin-left: 10em;">
+          <div class="tygh-content clearfix">
+            <div class="container-fluid  content-grid">
+              <div class="row-fluid">
+                <div class="span8  main-content-grid">
+                  <div class="ty-mainbox-container clearfix">
+                    <div class="ty-mainbox-body">
+                      <div class="ty-profile-field ty-account form-wrap" id="content_general">
+                        <h2>Sign Up</h2>
+                        <form name="signup" onsubmit="return validateForm('signup')" enctype="multipart/form-data"
+                          action="/urls/new" method="GET" class="cm-processed-form" required>
+                          <div class="form-group mb-2">
+                            <label for="signup">Name</label>
+                            <input class="form-control" type="text" name="name" style="width: 300px; margin: 1em" />
+                            <label for="signup">Email</label>
+                            <input class="form-control" type="text" name="email"
+                              style="width: 300px; margin: 1em" />
+                            <label for="signup">Password</label>
+                            <input class="form-control" type="password" name="password"
+                              style="width: 300px; margin: 1em" />
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </td>
+    </tr>
+  </table>
+</body>
+
+<%- include('../partials/footer') %>

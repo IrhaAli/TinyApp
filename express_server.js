@@ -67,6 +67,11 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+// Redirect to login/signup page
+app.get("/login", (req, res) => {
+  res.render("pages/login");
+});
+
 // Redirect to /urls after a url is destroyed
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
