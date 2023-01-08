@@ -3,7 +3,7 @@ const { generateRandomString } = require('./backend/genRandString');
 
 // Set up the express web server
 const express = require("express");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
@@ -11,21 +11,13 @@ app.use(express.urlencoded({ extended: true }));
 let loginStat = false;
 
 // Init the lib
-app.use(cookieParser());
+// app.use(cookieParser());
 
 // temporary database for users
 const USERS = {
   'user1': 'password1',
   'user2': 'password2'
 };
-
-// routing for logout
-app.get('/logout', (req, res) => {
-  res.clearCookie('username');
-  loginStat = false;
-  const templateVars = { loginStat };
-  res.render('/', templateVars);
-});
 
 // Starting database
 const urlDatabase = {
@@ -85,9 +77,14 @@ app.get("/u/:id", (req, res) => {
 
 // Redirect to login/signup page
 app.get("/login", (req, res) => {
-  loginStat = (loginStat) ? false : loginStat;
-  const templateVars = { loginStat };
-  res.render("pages/login", templateVars);
+  if (loginStat) {
+    loginStat = false;
+    const templateVars = { loginStat };
+    res.render('pages/main', templateVars);
+  } else {
+    const templateVars = { loginStat };
+    res.render("pages/login", templateVars);
+  }
 });
 
 // After login form is filled
@@ -110,9 +107,11 @@ app.post('/signup', (req, res) => {
   if (USERS[email] === undefined) {
     loginStat = true;
     USERS[email] = req.body['password'];
-    res.render("pages/urls_new", loginStat);
+    const templateVars = { loginStat };
+    res.render("pages/urls_new", templateVars);
   } else {
-    res.render("pages/login", loginStat);
+    const templateVars = { loginStat };
+    res.render("pages/login", templateVars);
   }
 });
 
