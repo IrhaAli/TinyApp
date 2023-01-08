@@ -1,7 +1,5 @@
-// Generate random string of length 6 for testing purposes
-const generateRandomString = function() {
-  return Math.random().toString(36).slice(2).substring(0, 6);
-};
+// Import the backend functions
+const { generateRandomString } = require('./backend/genRandString');
 
 // Set up the express web server
 const express = require("express");
