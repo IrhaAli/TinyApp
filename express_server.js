@@ -9,6 +9,7 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
+const bcrypt = require("bcryptjs");
 
 // temporary database for users
 const users = {
@@ -24,14 +25,12 @@ const urlDatabase = {
 
 // Main page
 app.get("/", (req, res) => {
-  const user = req.cookies.user;
-  res.render("pages/main", { user });
+  res.render("pages/main", { user: req.cookies.user });
 });
 
 // Redirect to login/signup page
 app.get("/login", (req, res) => {
-  const user = undefined;
-  res.render("pages/login", { user });
+  res.render("pages/login", { user: undefined });
 });
 
 // Page for user's URLs
@@ -52,7 +51,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const user = req.cookies.user;
-  if ((!user) || (urlDatabase[user][id] === undefined)) {
+  if (urlDatabase[user][id] === undefined) {
     res.render("pages/404", user);
   }
   const templateVars = { id, longURL: urlDatabase[user][id], user };
@@ -61,22 +60,19 @@ app.get("/urls/:id", (req, res) => {
 
 // Redirect to the longURL that the shortURL is hyperlinked to
 app.get("/u/:id", (req, res) => {
-  const user = req.cookies.user;
-  const longURL = urlDatabase[user][req.params.id];
-  res.redirect(longURL);
+  res.redirect(urlDatabase[req.cookies.user][req.params.id]);
 });
 
 // After login form is filled
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = users[email];
-  if (password === req.body['password']) {
+  if (password === undefined) {
+    res.render("pages/login", { user: undefined });
+  } else if (bcrypt.compareSync(password, req.body['password'])) {
     res.cookie('user', email);
     const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_index", templateVars);
-  } else {
-    const templateVars = { user: undefined };
-    res.render("pages/login", templateVars);
   }
 });
 
@@ -84,14 +80,13 @@ app.post('/login', (req, res) => {
 app.post('/signup', (req, res) => {
   const email = req.body['email'];
   if (users[email] === undefined) {
-    users[email] = req.body['password'];
+    users[email] = bcrypt.hashSync(req.body['password'], 10);
     urlDatabase[email] = {};
     res.cookie('user', email);
     const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_new", templateVars);
   } else {
-    const templateVars = { user: undefined };
-    res.render("pages/login", templateVars);
+    res.render("pages/login", { user: undefined });
   }
 });
 
