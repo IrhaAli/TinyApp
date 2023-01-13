@@ -28,10 +28,16 @@ app.get("/", (req, res) => {
   res.render("pages/main", { user });
 });
 
+// Redirect to login/signup page
+app.get("/login", (req, res) => {
+  const user = undefined;
+  res.render("pages/login", { user });
+});
+
 // Page for user's URLs
 app.get("/urls", (req, res) => {
   const user = req.cookies.user;
-  const templateVars = { urls: (user) ? urlDatabase[user] : {}, user };
+  const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
 });
 
@@ -60,29 +66,17 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-// Redirect to login/signup page
-app.get("/login", (req, res) => {
-  let user = req.cookies.user;
-  if (user) {
-    res.clearCookie('email');
-    const user = req.cookies.user;
-    res.render('pages/main', { user });
-  } else {
-    res.render("pages/login", { user });
-  }
-});
-
 // After login form is filled
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = users[email];
   if (password === req.body['password']) {
     res.cookie('user', email);
-    const user = req.cookies.user;
-    const templateVars = { urls: urlDatabase[user], user };
+    const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_index", templateVars);
   } else {
-    res.render("pages/login", { undefined });
+    const templateVars = { user: undefined };
+    res.render("pages/login", templateVars);
   }
 });
 
@@ -90,27 +84,29 @@ app.post('/login', (req, res) => {
 app.post('/signup', (req, res) => {
   const email = req.body['email'];
   if (users[email] === undefined) {
-    const user = req.cookies.user;
     users[email] = req.body['password'];
+    urlDatabase[email] = {};
     res.cookie('user', email);
-    res.render("pages/urls_new", { user });
+    const templateVars = { urls: urlDatabase[email], user: email };
+    res.render("pages/urls_new", templateVars);
   } else {
-    res.render("pages/login", { undefined });
+    const templateVars = { user: undefined };
+    res.render("pages/login", templateVars);
   }
 });
 
 // Redirect to /urls after a url is destroyed
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[user][req.params.id];
   const user = req.cookies.user;
+  delete urlDatabase[user][req.params.id];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
 });
 
 // Redirect to /urls after an existing url is edited
 app.post("/urls/:id/edit", (req, res) => {
-  urlDatabase[user][req.params.id] = req.body['longURL'];
   const user = req.cookies.user;
+  urlDatabase[user][req.params.id] = req.body['longURL'];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
 });
@@ -125,6 +121,12 @@ app.post("/urls/add", (req, res) => {
   urlDatabase[user][shortURL] = req.body['longURL'];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
+});
+
+// logout
+app.post('/logout', (req, res) => {
+  res.clearCookie('user');
+  res.redirect('/login');
 });
 
 // Custom 404 for all non-existing pages
