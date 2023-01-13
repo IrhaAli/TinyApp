@@ -12,7 +12,7 @@
                 <form class="form-inline" action="/login" method="GET">
                     <div class="form-group mb-2">
                         <button type="submit" class="btn btn-primary">
-                            <%= loginStat != true ? 'Log In/Sign Up' : 'Log Out' %>
+                            <%= (user === undefined) ? 'Log In/Sign Up' : 'Log Out' %>
                         </button>
                     </div>
                 </form>
