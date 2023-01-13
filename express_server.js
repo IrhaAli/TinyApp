@@ -2,14 +2,21 @@
 const { generateRandomString } = require('./backend/helperFunctions');
 
 // Set up the express web server
+const cookieSession = require('cookie-session');
 const express = require("express");
+
 const app = express();
-const PORT = 8080; // default port 8080
-app.set("view engine", "ejs");
-app.use(express.urlencoded({ extended: false }));
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
+
+app.set('trust proxy', 1);
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2'],
+}));
 const bcrypt = require("bcryptjs");
+app.use(express.urlencoded({ extended: false }));
+app.set("view engine", "ejs");
+const PORT = 8080; // default port 8080
 
 // Starting database for users
 const users = {
@@ -25,7 +32,7 @@ const urlDatabase = {
 
 // Main page
 app.get("/", (req, res) => {
-  res.render("pages/main", { user: req.cookies.user });
+  res.render("pages/main", { user: req.session.user });
 });
 
 // Redirect to login/signup page
@@ -35,14 +42,14 @@ app.get("/login", (req, res) => {
 
 // Page for user's URLs
 app.get("/urls", (req, res) => {
-  const user = req.cookies.user;
+  const user = req.session.user;
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
 });
 
 // Page for adding a new url
 app.get("/urls/new", (req, res) => {
-  const user = req.cookies.user;
+  const user = req.session.user;
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_new", templateVars);
 });
@@ -50,9 +57,9 @@ app.get("/urls/new", (req, res) => {
 // Page for a specified url
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
-  const user = req.cookies.user;
+  const user = req.session.user;
   if (urlDatabase[user][id] === undefined) {
-    res.render("pages/404", {user});
+    res.render("pages/404", { user });
   }
   const templateVars = { id, longURL: urlDatabase[user][id], user };
   res.render("pages/urls_show", templateVars);
@@ -60,7 +67,7 @@ app.get("/urls/:id", (req, res) => {
 
 // Redirect to the longURL that the shortURL is hyperlinked to
 app.get("/u/:id", (req, res) => {
-  res.redirect(urlDatabase[req.cookies.user][req.params.id]);
+  res.redirect(urlDatabase[req.session.user][req.params.id]);
 });
 
 // After login form is filled
@@ -68,7 +75,7 @@ app.post('/login', (req, res) => {
   const email = req.body['email'];
   const hashedPassword = (users[email]) ? users[email] : '';
   if (bcrypt.compareSync(req.body['password'], hashedPassword)) {
-    res.cookie('user', email);
+    req.session.user = email;
     const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_index", templateVars);
   } else {
@@ -82,7 +89,7 @@ app.post('/signup', (req, res) => {
   if (users[email] === undefined) {
     users[email] = bcrypt.hashSync(req.body['password'], 10);
     urlDatabase[email] = {};
-    res.cookie('user', email);
+    req.session.user = email;
     const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_new", templateVars);
   } else {
@@ -92,7 +99,7 @@ app.post('/signup', (req, res) => {
 
 // Redirect to /urls after a url is destroyed
 app.post("/urls/:id/delete", (req, res) => {
-  const user = req.cookies.user;
+  const user = req.session.user;
   delete urlDatabase[user][req.params.id];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
@@ -100,7 +107,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // Redirect to /urls after an existing url is edited
 app.post("/urls/:id/edit", (req, res) => {
-  const user = req.cookies.user;
+  const user = req.session.user;
   urlDatabase[user][req.params.id] = req.body['longURL'];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
@@ -112,7 +119,7 @@ app.post("/urls/add", (req, res) => {
   if (shortURL === "" || shortURL === null || shortURL === undefined) {
     shortURL = generateRandomString();
   }
-  const user = req.cookies.user;
+  const user = req.session.user;
   urlDatabase[user][shortURL] = req.body['longURL'];
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
@@ -126,7 +133,7 @@ app.post('/logout', (req, res) => {
 
 // Custom 404 for all non-existing pages
 app.get('*', function(req, res) {
-  const user = req.cookies.user;
+  const user = req.session.user;
   res.render("pages/404", { user });
 });
 
