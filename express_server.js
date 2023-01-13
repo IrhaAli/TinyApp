@@ -11,13 +11,13 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const bcrypt = require("bcryptjs");
 
-// temporary database for users
+// Starting database for users
 const users = {
-  'user1': 'password1',
-  'user2': 'password2'
+  'user1': bcrypt.hashSync('123', 10),
+  'user2': bcrypt.hashSync('456', 10),
 };
 
-// Starting database
+// Starting database for urls of users
 const urlDatabase = {
   'user1': { "b2xVn2": "http://www.lighthouselabs.ca" },
   'user2': { "9sm5xK": "http://www.google.com" }
@@ -52,7 +52,7 @@ app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const user = req.cookies.user;
   if (urlDatabase[user][id] === undefined) {
-    res.render("pages/404", user);
+    res.render("pages/404", {user});
   }
   const templateVars = { id, longURL: urlDatabase[user][id], user };
   res.render("pages/urls_show", templateVars);
@@ -66,13 +66,13 @@ app.get("/u/:id", (req, res) => {
 // After login form is filled
 app.post('/login', (req, res) => {
   const email = req.body['email'];
-  const password = users[email];
-  if (password === undefined) {
-    res.render("pages/login", { user: undefined });
-  } else if (bcrypt.compareSync(password, req.body['password'])) {
+  const hashedPassword = (users[email]) ? users[email] : '';
+  if (bcrypt.compareSync(req.body['password'], hashedPassword)) {
     res.cookie('user', email);
     const templateVars = { urls: urlDatabase[email], user: email };
     res.render("pages/urls_index", templateVars);
+  } else {
+    res.render("pages/login", { user: undefined });
   }
 });
 
