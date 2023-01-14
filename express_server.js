@@ -120,15 +120,15 @@ app.post('/signup', [
   }
   // Verifying email availibility
   const email = req.body['email'];
-  if (users[email] === undefined) {
+  if (users[email]) {
+    const alert = { signup: [{ msg: "Account already exists" }] };
+    const templateVars = { alert, user: undefined };
+    res.render("pages/login", templateVars);
+  } else {
     users[email] = bcrypt.hashSync(req.body['password'], 10);
     urlDatabase[email] = {};
     req.session.user = email;
     res.redirect("/urls/new");
-  } else {
-    const alert = { signup: [{ msg: "Account already exists" }] };
-    const templateVars = { alert, user: undefined };
-    res.render("pages/login", templateVars);
   }
 });
 

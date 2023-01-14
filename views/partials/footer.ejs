@@ -5,10 +5,10 @@
     <ul class="nav col-md-4 justify-content-end">
       <li class="nav-item"><a href="/" class="nav-link px-2">TinyApp</a></li>
       <li class="nav-item"><a href="/urls" class="nav-link px-2">
-          <%= (user===undefined) ? '' : 'My URLs' %>
+          <%= (user) ? 'My URLs' : '' %>
         </a></li>
       <li class="nav-item"><a href="/urls/new" class="nav-link px-2">
-          <%= (user===undefined) ? '' : 'Create New URL' %>
+          <%= (user) ? 'Create New URL' : '' %>
         </a></li>
     </ul>
   </footer>
