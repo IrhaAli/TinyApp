@@ -33,19 +33,26 @@ const urlDatabase = {
   'user2': { "9sm5xK": "http://www.google.com" }
 };
 
+// Helper function for login page
+const loginPage = function(req, res, alert) {
+  res.render("pages/login", { alert, user: undefined });
+};
+
 // Main page
 app.get("/", (req, res) => {
-  res.render("pages/main", { user: req.session.user });
+  const user = req.session.user;
+  res.render("pages/main", { user });
 });
 
 // Redirect to login/signup page
-app.get("/login", (req, res) => {
-  res.render("pages/login", { alert: {}, user: undefined });
-});
+app.get("/login", loginPage);
 
 // Page for user's URLs
 app.get("/urls", (req, res) => {
   const user = req.session.user;
+  if (!user) {
+    res.redirect("/404");
+  }
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
 });
@@ -53,15 +60,18 @@ app.get("/urls", (req, res) => {
 // Page for adding a new url
 app.get("/urls/new", (req, res) => {
   const user = req.session.user;
+  if (!user) {
+    res.redirect("/404");
+  }
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_new", templateVars);
 });
 
 // Page for a specified url
 app.get("/urls/:id", (req, res) => {
-  const id = req.params.id;
   const user = req.session.user;
-  if (urlDatabase[user][id] === undefined) {
+  const id = req.params.id;
+  if ((!user) || (urlDatabase[user][id] === undefined)) {
     res.redirect("pages/404");
   }
   const templateVars = { id, url: urlDatabase[user], user };
@@ -70,7 +80,12 @@ app.get("/urls/:id", (req, res) => {
 
 // Redirect to the longURL that the shortURL is hyperlinked to
 app.get("/u/:id", (req, res) => {
-  res.redirect(urlDatabase[req.session.user][req.params.id]);
+  const user = req.session.user;
+  const id = req.params.id;
+  if (!user) {
+    res.redirect("pages/404");
+  }
+  res.redirect(urlDatabase[user][id]);
 });
 
 // After login button is pressed
@@ -86,8 +101,7 @@ app.post('/login', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const alert = { login: errors.array() };
-    const templateVars = { alert, user: undefined };
-    res.render('pages/login', templateVars);
+    return loginPage(req, res, alert);
   }
   // Verifying email and password fields
   const email = req.body['email'];
@@ -96,18 +110,18 @@ app.post('/login', [
     req.session.user = email;
     res.redirect("/urls");
   } else {
-    const alert = { login: [{ msg: "Incorrect Password/Account does not exists" }] };
-    const templateVars = { alert, user: undefined };
-    res.render("pages/login", templateVars);
+    const loginAlert = { msg: (hashedPassword) ? "Incorrect Password" : "Account does not exists" };
+    const alert = { login: [loginAlert] };
+    return loginPage(req, res, alert);
   }
 });
 
 // After signup form is filled
 app.post('/signup', [
-  check('email', 'Email field is empty')
+  check('email', 'Email field is required')
     .exists()
     .isLength({ min: 1 }),
-  check('password', 'A password field is empty')
+  check('password', 'A password field is required')
     .exists()
     .isLength({ min: 1 }),
 ], (req, res) => {
@@ -115,15 +129,14 @@ app.post('/signup', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const alert = { signup: errors.array() };
-    const templateVars = { alert, user: undefined };
-    res.render('pages/login', templateVars);
+    return loginPage(req, res, alert);
   }
   // Verifying email availibility
   const email = req.body['email'];
   if (users[email]) {
-    const alert = { signup: [{ msg: "Account already exists" }] };
-    const templateVars = { alert, user: undefined };
-    res.render("pages/login", templateVars);
+    const signupAlert = { msg: "Account already exists" };
+    const alert = { signup: [signupAlert] };
+    return loginPage(req, res, alert);
   } else {
     users[email] = bcrypt.hashSync(req.body['password'], 10);
     urlDatabase[email] = {};
@@ -135,25 +148,28 @@ app.post('/signup', [
 // Redirect to /urls after a url is destroyed
 app.post("/urls/:id/delete", (req, res) => {
   const user = req.session.user;
-  delete urlDatabase[user][req.params.id];
+  const id = req.params.id;
+  delete urlDatabase[user][id];
   res.redirect("/urls");
 });
 
 // Redirect to /urls after an existing url is edited
 app.post("/urls/:id/edit", (req, res) => {
   const user = req.session.user;
-  urlDatabase[user][req.params.id] = req.body['longURL'];
+  const id = req.params.id;
+  urlDatabase[user][id] = req.body['longURL'];
   res.redirect("/urls");
 });
 
 // Redirect to /urls after a url is added
 app.post("/urls/add", (req, res) => {
-  let shortURL = req.body['longURLName'];
+  const { longURL, longURLName } = req.body;
+  let shortURL = longURLName;
+  const { user } = req.session;
   if (shortURL === "" || shortURL === null || shortURL === undefined) {
     shortURL = generateRandomString();
   }
-  const user = req.session.user;
-  urlDatabase[user][shortURL] = req.body['longURL'];
+  urlDatabase[user][shortURL] = longURL;
   res.redirect("/urls");
 });
 
