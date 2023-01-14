@@ -89,6 +89,7 @@ app.post('/login', [
     const templateVars = { alert, user: undefined };
     res.render('pages/login', templateVars);
   }
+  // Verifying email and password fields
   const email = req.body['email'];
   const hashedPassword = (users[email]) ? users[email] : '';
   if (bcrypt.compareSync(req.body['password'], hashedPassword)) {
@@ -103,21 +104,21 @@ app.post('/login', [
 
 // After signup form is filled
 app.post('/signup', [
-  check('email', 'Email field is required')
+  check('email', 'Email field is empty')
     .exists()
     .isLength({ min: 1 }),
-  check('password', 'Password does not match/A password field is empty')
+  check('password', 'A password field is empty')
     .exists()
     .isLength({ min: 1 }),
-  check('retype-password', 'Password does not match/A password field is empty')
-    .exists()
-    .equals()
 ], (req, res) => {
+  // Empty fields alert
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const alert = { signup: errors.array() };
-    res.render('pages/login', { alert });
+    const templateVars = { alert, user: undefined };
+    res.render('pages/login', templateVars);
   }
+  // Verifying email availibility
   const email = req.body['email'];
   if (users[email] === undefined) {
     users[email] = bcrypt.hashSync(req.body['password'], 10);
@@ -125,7 +126,9 @@ app.post('/signup', [
     req.session.user = email;
     res.redirect("/urls/new");
   } else {
-    res.redirect("/login");
+    const alert = { signup: [{ msg: "Account already exists" }] };
+    const templateVars = { alert, user: undefined };
+    res.render("pages/login", templateVars);
   }
 });
 
@@ -166,6 +169,7 @@ app.get('*', function(req, res) {
   res.render("pages/404", { user });
 });
 
+// Start listening
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
