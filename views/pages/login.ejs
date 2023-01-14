@@ -43,97 +43,99 @@
       background-color: #eee;
     }
   </style>
-  <script>
-    function validateForm(type) {
-      const email = document.forms[type]["email"].value;
-      const password = document.forms[type]["password"].value;
-      const rePassword = document.forms[type]["retype-password"].value;
-      // for signup/login form: form if incomplete
-      if ((email === "" || email === null) || (password === "" || password === null) || (rePassword === "" || rePassword === null)) {
-        alert("One of the fields below is missing");
-        return false;
-        // for signup: password !== confirm password
-      } else if (password !== rePassword) {
-        alert("Password does not match");
-        return false;
-      }
-    }
-  </script>
 </head>
 
 <%- include('../partials/head', {title :'kdkdk'}) %>
-  <%- include('../partials/header', {user}) %>
+<%- include('../partials/header', {user}) %>
 
-    <body class="screen--smlarge">
-      <table>
-        <tr>
-          <td>
-            <main style="margin: 5em; margin-left: 5em;">
-              <div class="tygh-content clearfix">
-                <div class="container-fluid  content-grid">
-                  <div class="row-fluid">
-                    <div class="span8  main-content-grid">
-                      <div class="ty-mainbox-container clearfix">
-                        <div class="ty-mainbox-body">
-                          <div class="ty-profile-field ty-account form-wrap" id="content_general">
-                            <h2>Log In</h2>
-                            <form name="login" onsubmit="return validateForm('login')" action="/login" method="POST"
-                              class="cm-processed-form" required>
-                              <div class="form-group mb-2">
-                                <label for="email">Email</label>
-                                <input class="form-control" type="text" name="email"
-                                  style="width: 300px; margin: 1em" />
-                                <label for="password">Password</label>
-                                <input class="form-control" type="password" name="password"
-                                  style="width: 300px; margin: 1em" />
-                                <button type="submit" class="btn btn-primary">Log In</button>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
+<body class="screen--smlarge">
+  <table>
+    <tr>
+      <td>
+        <main style="margin: 5em; margin-left: 5em;">
+          <div class="tygh-content clearfix">
+            <div class="container-fluid  content-grid">
+              <div class="row-fluid">
+                <div class="span8  main-content-grid">
+                  <div class="ty-mainbox-container clearfix">
+                    <div class="ty-mainbox-body">
+                      <div class="ty-profile-field ty-account form-wrap" id="content_general">
+                        <h2>Log In</h2>
+                        <% if (typeof alert.login !='undefined' ) { %>
+                          <% alert.login.forEach(function(error) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                              <%= error.msg %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <% }) %>
+                              <% } %>
+                                <form name="login" action="/login" method="POST" class="cm-processed-form">
+                                  <div class="form-group mb-2">
+                                    <label for="email">Email</label>
+                                    <input class="form-control" type="text" name="email"
+                                      style="width: 300px; margin: 1em" />
+                                    <label for="password">Password</label>
+                                    <input class="form-control" type="password" name="password"
+                                      style="width: 300px; margin: 1em" />
+                                    <button type="submit" class="btn btn-primary">Log In</button>
+                                  </div>
+                                </form>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </main>
-          </td>
-          <td>
-            <main style="margin: 5em; margin-left: 5em;">
-              <div class="tygh-content clearfix">
-                <div class="container-fluid  content-grid">
-                  <div class="row-fluid">
-                    <div class="span8  main-content-grid">
-                      <div class="ty-mainbox-container clearfix">
-                        <div class="ty-mainbox-body">
-                          <div class="ty-profile-field ty-account form-wrap" id="content_general">
-                            <h2>Sign Up</h2>
-                            <form name="signup" onsubmit="return validateForm('signup')" action="/signup" method="POST"
-                              class="cm-processed-form" required>
-                              <div class="form-group mb-2">
-                                <label for="email">Email</label>
-                                <input class="form-control" type="text" name="email"
-                                  style="width: 300px; margin: 1em" />
-                                <label for="password">Password</label>
-                                <input class="form-control" type="password" name="password"
-                                  style="width: 300px; margin: 1em" />
-                                <label for="password">Confirm Password</label>
-                                <input class="form-control" type="password" name="retype-password"
-                                  style="width: 300px; margin: 1em" />
-                                <button type="submit" class="btn btn-primary">Sign Up</button>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
+            </div>
+          </div>
+        </main>
+      </td>
+      <td>
+        <main style="margin: 5em; margin-left: 5em;">
+          <div class="tygh-content clearfix">
+            <div class="container-fluid  content-grid">
+              <div class="row-fluid">
+                <div class="span8  main-content-grid">
+                  <div class="ty-mainbox-container clearfix">
+                    <div class="ty-mainbox-body">
+                      <div class="ty-profile-field ty-account form-wrap" id="content_general">
+                        <h2>Sign Up</h2>
+                        <% if (typeof alert.signup !='undefined' ) { %>
+                          <% alert.signup.forEach(function(error) { %>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                              <%= error.msg %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <% }) %>
+                              <% } %>
+                                <form name="signup" action="/signup" method="POST" class="cm-processed-form">
+                                  <div class="form-group mb-2">
+                                    <label for="email">Email</label>
+                                    <input class="form-control" type="text" name="email"
+                                      style="width: 300px; margin: 1em" />
+                                    <label for="password">Password</label>
+                                    <input class="form-control" type="password" name="password"
+                                      style="width: 300px; margin: 1em" />
+                                    <label for="password">Confirm Password</label>
+                                    <input class="form-control" type="password" name="retype-password"
+                                      style="width: 300px; margin: 1em" />
+                                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                                  </div>
+                                </form>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </main>
-          </td>
-        </tr>
-      </table>
-    </body>
+            </div>
+          </div>
+        </main>
+      </td>
+    </tr>
+  </table>
+</body>
 
-    <%- include('../partials/footer') %>
+<%- include('../partials/footer') %>

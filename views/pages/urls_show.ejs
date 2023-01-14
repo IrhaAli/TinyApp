@@ -7,6 +7,9 @@
       if (longURL == "" || longURL == null) {
         alert("You must provide a URL");
         return false;
+      } else if (Object.values(urls).includes(longURL)) {
+        alert("This URL is already saved");
+        return false;
       }
     }
     </script>
@@ -23,7 +26,7 @@
   <div class="card text-center">
     <div class="card-header"></div>
     <div class="card-body">
-      <h5 class="card-title">TinyURL for: <%= longURL %>
+      <h5 class="card-title">TinyURL for: <%= url[id] %>
       </h5>
       <p class="card-text">
         Short URL ID: <a href="/u/<%= id %>" target="_blank">
