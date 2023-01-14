@@ -23,14 +23,14 @@ const { check, validationResult } = require('express-validator');
 
 // Starting database for users
 const users = {
-  'user1': bcrypt.hashSync('123', 10),
-  'user2': bcrypt.hashSync('456', 10),
+  'user1@gmail.com': bcrypt.hashSync('123456', 10),
+  'user2@gmail.com': bcrypt.hashSync('654321', 10),
 };
 
 // Starting database for urls of users
 const urlDatabase = {
-  'user1': { "b2xVn2": "http://www.lighthouselabs.ca" },
-  'user2': { "9sm5xK": "http://www.google.com" }
+  'user1@gmail.com': { "b2xVn2": "http://www.lighthouselabs.ca" },
+  'user2@gmail.com': { "9sm5xK": "http://www.google.com" }
 };
 
 // Helper function for login page
@@ -97,45 +97,37 @@ app.post('/login', [
     .exists()
     .isLength({ min: 1 }),
 ], (req, res) => {
-  // Empty fields alert
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const alert = { login: errors.array() };
-    return loginPage(req, res, alert);
-  }
-  // Verifying email and password fields
   const email = req.body['email'];
   const hashedPassword = (users[email]) ? users[email] : '';
-  if (bcrypt.compareSync(req.body['password'], hashedPassword)) {
+  // Error vs. sucessful login
+  if (errors.isEmpty() && bcrypt.compareSync(req.body['password'], hashedPassword)) {
     req.session.user = email;
     res.redirect("/urls");
   } else {
-    const loginAlert = { msg: (hashedPassword) ? "Incorrect Password" : "Account does not exists" };
-    const alert = { login: [loginAlert] };
+    const alert = { login: errors.array() };
+    const otherErrors = (email) ? [{ msg: (hashedPassword) ? "Incorrect Password" : "Account does not exists" }] : [];
+    alert.login = alert.login.concat(otherErrors);
     return loginPage(req, res, alert);
   }
 });
 
 // After signup form is filled
 app.post('/signup', [
-  check('email', 'Email field is required')
+  check('email', 'Email field is required/Invalid Email')
     .exists()
-    .isLength({ min: 1 }),
-  check('password', 'A password field is required')
-    .exists()
-    .isLength({ min: 1 }),
+    .isEmail(),
+  check('password', 'Password must be between 6 to 14 characters long')
+    .isLength({ min: 6, max: 14 }),
 ], (req, res) => {
-  // Empty fields alert
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const alert = { signup: errors.array() };
-    return loginPage(req, res, alert);
-  }
-  // Verifying email availibility
   const email = req.body['email'];
-  if (users[email]) {
-    const signupAlert = { msg: "Account already exists" };
-    const alert = { signup: [signupAlert] };
+  const alreadyExists = users[email];
+  // Error vs. successful signup
+  if (!errors.isEmpty() || alreadyExists) {
+    const alert = { signup: errors.array() };
+    const otherErrors = (alreadyExists) ? [{ msg: "Account already exists" }] : [];
+    alert.signup = alert.signup.concat(otherErrors);
     return loginPage(req, res, alert);
   } else {
     users[email] = bcrypt.hashSync(req.body['password'], 10);
@@ -165,7 +157,7 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/urls/add", (req, res) => {
   const { longURL, longURLName } = req.body;
   let shortURL = longURLName;
-  const { user } = req.session;
+  const user = req.session.user;
   if (shortURL === "" || shortURL === null || shortURL === undefined) {
     shortURL = generateRandomString();
   }
