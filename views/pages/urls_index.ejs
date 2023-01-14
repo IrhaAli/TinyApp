@@ -7,54 +7,57 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
   <title>TinyApp - My URLs</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <style>
-        * {
-          box-sizing: border-box;
-        }
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        #myInput {
-          background-image: url('/css/searchicon.png');
-          background-position: 10px 12px;
-          background-repeat: no-repeat;
-          width: 100%;
-          font-size: 16px;
-          padding: 12px 20px 12px 40px;
-          border: 1px solid #ddd;
-          margin-bottom: 12px;
-        }
+    #myInput {
+      background-image: url('/css/searchicon.png');
+      background-position: 10px 12px;
+      background-repeat: no-repeat;
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
 
-        #myUL {
-          list-style-type: none;
-          padding: 0;
-          margin: 0;
-        }
+    #myUL {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
 
-        #myUL li a {
-          border: 1px solid #ddd;
-          margin-top: -1px;
-          /* Prevent double borders */
-          background-color: #f6f6f6;
-          padding: 12px;
-          text-decoration: none;
-          font-size: 18px;
-          color: black;
-          display: block
-        }
+    #myUL li a {
+      border: 1px solid #ddd;
+      margin-top: -1px;
+      /* Prevent double borders */
+      background-color: #f6f6f6;
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      color: black;
+      display: block
+    }
 
-        #myUL li a:hover:not(.header) {
-          background-color: #eee;
-        }
-      </style>
+    #myUL li a:hover:not(.header) {
+      background-color: #eee;
+    }
+  </style>
 </head>
-
+<!-- Header -->
 <%- include('../partials/head', {title :'kdkdk'}) %>
-<%- include('../partials/header') %>
-
+<%- include('../partials/header', {user}) %>
+<!-- Body -->
 <body>
   <main style="margin: 1em;">
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for a URL..." title="Type in a URL ID"
-      style="width: 300px; margin: 1em">
+    <h3 style="margin-left: 0.5em">My URLs</h3>
+    <!-- Search Engine -->
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for a URL..."
+      title="Type in a URL ID" style="width: 300px; margin: 1em">
+    <!-- Display all URLs of the user as: ShortURL LongURL Edit Button Delete Button -->
     <ul id="myUL">
       <% for (let id in urls) { %>
         <tr>
@@ -72,7 +75,7 @@
                   </a>
                 </td>
                 <td>
-                  <form class="form-inline" action="/urls/<%= id %>" target="_blank" method="GET">
+                  <form class="form-inline" action="/urls/<%= id %>" method="GET">
                     <div class="form-group mb-2">
                       <button type="submit" class="btn btn-primary">Edit</button>
                     </div>
@@ -91,9 +94,10 @@
         </tr>
         <% } %>
     </ul>
+    <!-- Search engine backend. Taken by w3school -->
     <script>
       function myFunction() {
-        var input, filter, ul, li, a, i, txtValue;
+        let input, filter, ul, li, a, i, txtValue;
         input = document.getElementById("myInput");
         filter = input.value.toUpperCase();
         ul = document.getElementById("myUL");
@@ -123,5 +127,5 @@
 </body>
 
 </html>
-
+<!-- Footer -->
 <%- include('../partials/footer') %>

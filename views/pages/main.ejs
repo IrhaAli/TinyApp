@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8" />
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
-  <title>TinyApp - My URLs</title>
+  <title>TinyApp</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <style>
         * {
@@ -47,10 +46,10 @@
         }
       </style>
 </head>
-
+<!-- Header -->
 <%- include('../partials/head', {title :'kdkdk'}) %>
-<%- include('../partials/header') %>
-
+<%- include('../partials/header', {user}) %>
+<!-- Body -->
 <body>
   <main style="margin: 3em;">
     <h3>Welcome to Tiny URL App where anything is possible if you believe 🌈🧽 (If you know, you know).</h3>
@@ -66,7 +65,6 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 </body>
-
 </html>
-
+<!-- Footer -->
 <%- include('../partials/footer') %>

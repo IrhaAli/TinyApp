@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<!--Taken from the Demo Store of cs-cart. The comments below are guesses of what's happening in the file-->
+<!--The body is taken from the Demo Store of cs-cart-->
 <head>
   <meta name="robots" content="noindex, nofollow" />
   <title>Page Not Found</title>
@@ -127,10 +127,10 @@
     }
   </style>
 </head>
-
+<!-- Header -->
 <%- include('../partials/head', {title :'kdkdk'}) %>
-<%- include('../partials/header') %>
-
+<%- include('../partials/header', {user}) %>
+<!-- Body -->
 <body>
   <!-- Contents of the banner and error code -->
   <div class="container">
@@ -145,5 +145,5 @@
   </div>
 </body>
 </html>
-
+<!-- Footer -->
 <%- include('../partials/footer') %>
