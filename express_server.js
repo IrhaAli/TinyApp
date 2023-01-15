@@ -1,7 +1,7 @@
 // Import the backend functions
 const { generateRandomString } = require('./backend/helperFunctions');
 
-// Set up the express web server
+// Set up the express web server and encryption
 const cookieSession = require('cookie-session');
 const express = require("express");
 
@@ -33,9 +33,13 @@ const urlDatabase = {
   'user2@gmail.com': { "9sm5xK": "http://www.google.com" }
 };
 
-// Helper function for login page
+// Helper functions
 const loginPage = function(req, res, alert) {
   res.render("pages/login", { alert, user: undefined });
+};
+const errorPage = function(req, res, errorType) {
+  const user = req.session.user;
+  res.render("pages/error", { user, errorType });
 };
 
 // Main page
@@ -44,14 +48,15 @@ app.get("/", (req, res) => {
   res.render("pages/main", { user });
 });
 
-// Redirect to login/signup page
+// Login/signup page
 app.get("/login", loginPage);
 
 // Page for user's URLs
 app.get("/urls", (req, res) => {
   const user = req.session.user;
+  // Send 401 for accessing this page when not logged in
   if (!user) {
-    res.redirect("/404");
+    errorPage(req, res, '401');
   }
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_index", templateVars);
@@ -60,8 +65,9 @@ app.get("/urls", (req, res) => {
 // Page for adding a new url
 app.get("/urls/new", (req, res) => {
   const user = req.session.user;
+  // Send 401 for accessing this page when not logged in
   if (!user) {
-    res.redirect("/404");
+    errorPage(req, res, '401');
   }
   const templateVars = { urls: urlDatabase[user], user };
   res.render("pages/urls_new", templateVars);
@@ -71,8 +77,9 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const user = req.session.user;
   const id = req.params.id;
+  // Send 401 for accessing this page when not logged in and 404 for invalid id
   if ((!user) || (urlDatabase[user][id] === undefined)) {
-    res.redirect("pages/404");
+    errorPage(req, res, (user) ? '404' : '401');
   }
   const templateVars = { id, url: urlDatabase[user], user };
   res.render("pages/urls_show", templateVars);
@@ -82,8 +89,9 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const user = req.session.user;
   const id = req.params.id;
-  if (!user) {
-    res.redirect("pages/404");
+  // Send 401 for accessing this page when not logged in and 404 for invalid id
+  if ((!user) || (urlDatabase[user][id] === undefined)) {
+    errorPage(req, res, (user) ? '404' : '401');
   }
   res.redirect(urlDatabase[user][id]);
 });
@@ -173,8 +181,7 @@ app.post('/logout', (req, res) => {
 
 // Custom 404 for all non-existing pages
 app.get('*', function(req, res) {
-  const user = req.session.user;
-  res.render("pages/404", { user });
+  errorPage(req, res, '404');
 });
 
 // Start listening

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<!--The body is taken from the Demo Store of cs-cart-->
 <head>
   <meta name="robots" content="noindex, nofollow" />
   <title>Page Not Found</title>
@@ -130,18 +129,18 @@
 <!-- Header -->
 <%- include('../partials/head', {title :'kdkdk'}) %>
 <%- include('../partials/header', {user}) %>
-<!-- Body -->
+<!-- Body (Note: The body is taken from the Demo Store of cs-cart)-->
 <body>
   <!-- Contents of the banner and error code -->
   <div class="container">
     <div class="bigEntrance banner">
       <div class="banner-inner">
-        Page Does Not Exist
+        Error <%=errorType%>
       </div>
     </div>
   </div>
   <div class="message">
-    <a href="https://http.cat/404" target="_blank">You look like this, right now.</a>
+    <a href="https://http.cat/<%=errorType%>" target="_blank">You look like this, right now.</a>
   </div>
 </body>
 </html>

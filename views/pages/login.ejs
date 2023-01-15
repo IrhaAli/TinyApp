@@ -62,6 +62,7 @@
                     <div class="ty-mainbox-body">
                       <div class="ty-profile-field ty-account form-wrap" id="content_general">
                         <h2>Log In</h2>
+                        <!-- Display alerts, if any -->
                         <% if (typeof alert.login !='undefined' ) { %>
                           <% alert.login.forEach(function(error) { %>
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -103,6 +104,7 @@
                     <div class="ty-mainbox-body">
                       <div class="ty-profile-field ty-account form-wrap" id="content_general">
                         <h2>Sign Up</h2>
+                        <!-- Display alerts, if any -->
                         <% if (typeof alert.signup !='undefined' ) { %>
                           <% alert.signup.forEach(function(error) { %>
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
