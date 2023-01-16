@@ -1,5 +1,6 @@
-// Import the backend functions
-const { generateRandomString } = require('./backend/helperFunctions');
+// Import the backend functions and data
+const { generateRandomString, loginPage, errorPage } = require('./backend/helperFunctions');
+const { users, urlDatabase } = require('./database');
 
 // Set up the express web server and encryption
 const cookieSession = require('cookie-session');
@@ -21,27 +22,6 @@ const PORT = 8080; // default port 8080
 
 const { check, validationResult } = require('express-validator');
 
-// Starting database for users
-const users = {
-  'user1@gmail.com': bcrypt.hashSync('123456', 10),
-  'user2@gmail.com': bcrypt.hashSync('654321', 10),
-};
-
-// Starting database for urls of users
-const urlDatabase = {
-  'user1@gmail.com': { "b2xVn2": "http://www.lighthouselabs.ca" },
-  'user2@gmail.com': { "9sm5xK": "http://www.google.com" }
-};
-
-// Helper functions
-const loginPage = function(req, res, alert) {
-  res.render("pages/login", { alert, user: undefined });
-};
-const errorPage = function(req, res, errorType) {
-  const user = req.session.user;
-  res.render("pages/error", { user, errorType });
-};
-
 // Main page
 app.get("/", (req, res) => {
   const user = req.session.user;
@@ -57,9 +37,10 @@ app.get("/urls", (req, res) => {
   // Send 401 for accessing this page when not logged in
   if (!user) {
     errorPage(req, res, '401');
+  } else {
+    const templateVars = { urls: urlDatabase[user], user };
+    res.render("pages/urls_index", templateVars);
   }
-  const templateVars = { urls: urlDatabase[user], user };
-  res.render("pages/urls_index", templateVars);
 });
 
 // Page for adding a new url
@@ -68,9 +49,10 @@ app.get("/urls/new", (req, res) => {
   // Send 401 for accessing this page when not logged in
   if (!user) {
     errorPage(req, res, '401');
+  } else {
+    const templateVars = { urls: urlDatabase[user], user };
+    res.render("pages/urls_new", templateVars);
   }
-  const templateVars = { urls: urlDatabase[user], user };
-  res.render("pages/urls_new", templateVars);
 });
 
 // Page for a specified url
@@ -80,9 +62,10 @@ app.get("/urls/:id", (req, res) => {
   // Send 401 for accessing this page when not logged in and 404 for invalid id
   if ((!user) || (urlDatabase[user][id] === undefined)) {
     errorPage(req, res, (user) ? '404' : '401');
+  } else {
+    const templateVars = { id, url: urlDatabase[user], user };
+    res.render("pages/urls_show", templateVars);
   }
-  const templateVars = { id, url: urlDatabase[user], user };
-  res.render("pages/urls_show", templateVars);
 });
 
 // Redirect to the longURL that the shortURL is hyperlinked to
@@ -92,8 +75,9 @@ app.get("/u/:id", (req, res) => {
   // Send 401 for accessing this page when not logged in and 404 for invalid id
   if ((!user) || (urlDatabase[user][id] === undefined)) {
     errorPage(req, res, (user) ? '404' : '401');
+  } else {
+    res.redirect(urlDatabase[user][id]);
   }
-  res.redirect(urlDatabase[user][id]);
 });
 
 // After login button is pressed
@@ -120,7 +104,7 @@ app.post('/login', [
   }
 });
 
-// After signup form is filled
+// After signup button is pressed
 app.post('/signup', [
   check('email', 'Email field is required/Invalid Email')
     .exists()
@@ -161,7 +145,7 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect("/urls");
 });
 
-// Redirect to /urls after a url is added
+// Redirect to /urls/:id after a url is added
 app.post("/urls/add", (req, res) => {
   const { longURL, longURLName } = req.body;
   let shortURL = longURLName;
@@ -170,7 +154,7 @@ app.post("/urls/add", (req, res) => {
     shortURL = generateRandomString();
   }
   urlDatabase[user][shortURL] = longURL;
-  res.redirect("/urls");
+  res.redirect(`/urls/${shortURL}`);
 });
 
 // logout
