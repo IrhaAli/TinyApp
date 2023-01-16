@@ -150,7 +150,7 @@ app.post("/urls/add", (req, res) => {
   const { longURL, longURLName } = req.body;
   let shortURL = longURLName;
   const user = req.session.user;
-  if (shortURL === "" || shortURL === null || shortURL === undefined) {
+  if (!shortURL) {
     shortURL = generateRandomString();
   }
   urlDatabase[user][shortURL] = longURL;
